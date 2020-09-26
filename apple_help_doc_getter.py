@@ -46,9 +46,9 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15'}
 
 
-def is_active(URL):
+def is_active(url):
     try:
-        r = requests.get(URL, headers=headers)
+        r = requests.get(url, headers=headers)
         if r.status_code == 200:
             html = r.text
             r.close
@@ -58,9 +58,9 @@ def is_active(URL):
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
 
-def create_soup(HTML)
-    soup = bs(HTML)
-
+def create_soup(html):
+    soup = bs(html)
+    return soup
 
 
 
