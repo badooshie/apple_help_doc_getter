@@ -19,11 +19,12 @@ Here are the steps inline of what this script will do:
 example address: https://support.apple.com/en-us/HT201295
 
 """
-
 import requests
-from bs4 import BeautifulSoup as bs
 import pandas as pd
 import html_file  # for testing
+from bs4 import BeautifulSoup as bs
+from time import sleep
+from random import randint
 
 """
 attempting to learn and use classes, lol
@@ -62,12 +63,11 @@ def create_soup(html):
     soup = bs(html)
     return soup
 
-
-
-
-
 for i in range(10):
     url_num_append = url_num_append + 1
     url_list.append(str(url_main) + str(url_num_append))
 
-print(url_list)
+for i in url_list:
+    print(i)
+    sleep_for = randint(1,6)
+    sleep(sleep_for)
