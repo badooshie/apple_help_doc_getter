@@ -10,11 +10,15 @@
 
 Here are the steps inline of what this script will do:
 #S1 request the webpage
-    > returns html as text if webpage is active or not by http responses
+    > based on 200 response, returns html as text or if non 200, returns non 200 string
 #S2 turn webpage into soup for easier handling
 #S3 get title, description, and last modified date
 #S4 add item to pandas DF
 #S5 export DF into CSV
+
+Redesign to include classes
+#C Class that creates a webpage instance.  This class contains methods to get website info.
+
 
 example address: https://support.apple.com/en-us/HT201295
 
@@ -26,42 +30,80 @@ from bs4 import BeautifulSoup as bs
 from time import sleep
 from random import randint
 
+
+class Webpage:
+    def __init__(self):
+        self.url_main = "https://support.apple.com/en-us/HT"
+        self.url_num_base = 200000
+        self.url_num_add = 0
+        self.url_complete = str(url_main + str(url_num_base + url_num_add))
+        self.headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'accept-encoding': 'gzip, deflate, br',
+            'accept-language': 'en-us',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15'}
+
+    def get_html(url):
+        try:
+            r = requests.get(url, headers=headers)
+            if r.status_code == 200:
+                html = r.text
+                r.close
+                return html
+            else:
+                html = 'Non 200 Status Code'
+                r.close
+                return html
+        except requests.exceptions.RequestException as e:
+            raise SystemExit(e)
+
+    def create_soup(html):
+        soup = bs(html)
+        return soup
+
+    def get_info(soup):
+        """Gets url, title, description, and other information"""
+
+        info_url = soup.head.find(attrs={"rel": "canonical"})['href']
+        info_title = soup.title.text
+        info_description = soup.find(attrs={"name": "description"})['content']
+        info_last_modified_date = soup.find(attrs={"class": "mod-date"}).time['datetime']
+
+        doc_info = {info_url: [info_title, info_description, info_last_modified_date]}
+
+        return doc_info
+
+
+    def print_basic_info(doc_info):
+        """Prints url, title, description, and last updated date"""
+        print(doc_info.key, doc_info.value[:2])
+        pass
+
+    def print_full_info(doc_info):
+        """Prints url, title, description, and other fun things"""
+        # TODO
+        pass
+
+
+def get_docs(amount_to_get):
+    pass
+
+
+def main():
+    """Checks if there is a pre-existing csv file with any apple helps docs, if so, checks docs, then gets and adds more help docs. If not, creates one and adds some apple help docs."""
+    amount_to_get = int(input("Please enter a number: "))
+    get_docs(amount_to_get)
+
+if __name__ == "__main__":
+    main()
+
 """
-attempting to learn and use classes, lol
 
-class webpage:
-    self.page = page
-"""
-
-url_main = "https://support.apple.com/en-us/HT"
-url_num_append = 200000
-url_complete = ''
-url_list = []
-
+# maybe this should be a global function? and not a class
+class link_list:
+    url_list = []
+    
 soup_test = bs(html_file.html_doc, 'html.parser')
-
-headers = {
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'accept-encoding': 'gzip, deflate, br',
-    'accept-language': 'en-us',
-    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15'}
-
-
-def is_active(url):
-    try:
-        r = requests.get(url, headers=headers)
-        if r.status_code == 200:
-            html = r.text
-            r.close
-            return html
-        else:
-            r.close
-    except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
-
-def create_soup(html):
-    soup = bs(html)
-    return soup
 
 for i in range(10):
     url_num_append = url_num_append + 1
@@ -71,3 +113,4 @@ for i in url_list:
     print(i)
     sleep_for = randint(1,6)
     sleep(sleep_for)
+"""
