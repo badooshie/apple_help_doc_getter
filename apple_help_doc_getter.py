@@ -32,20 +32,21 @@ from random import randint
 
 
 class Webpage:
-    def __init__(self):
-        self.url_main = "https://support.apple.com/en-us/HT"
+
+    def __init__(self, num):
+        self.num = num
+        self.url_main = 'https://support.apple.com/en-us/HT'
         self.url_num_base = 200000
-        self.url_num_add = 0
-        self.url_complete = str(url_main + str(url_num_base + url_num_add))
         self.headers = {
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'accept-encoding': 'gzip, deflate, br',
             'accept-language': 'en-us',
             'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15'}
+        self.url_complete = str(self.url_main + str(self.url_num_base + self.num))
 
-    def get_html(url):
+    def get_html(self):
         try:
-            r = requests.get(url, headers=headers)
+            r = requests.get(self.url_complete, headers=self.headers)
             if r.status_code == 200:
                 html = r.text
                 r.close
@@ -57,16 +58,18 @@ class Webpage:
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
 
-    def create_soup(html):
-        soup = bs(html)
+    def create_soup(self):
+        html = self.get_html()
+        soup = bs(html, features="html.parser")
         return soup
 
-    def get_info(soup):
+    def get_info(self):
         """Gets url, title, description, and other information"""
+        soup = self.create_soup()
 
         info_url = soup.head.find(attrs={"rel": "canonical"})['href']
         info_title = soup.title.text
-        info_description = soup.find(attrs={"name": "description"})['content']
+        info_description = soup.find(attrs={"name": "description"})['content'].replace('\n','')
         info_last_modified_date = soup.find(attrs={"class": "mod-date"}).time['datetime']
 
         doc_info = {info_url: [info_title, info_description, info_last_modified_date]}
@@ -76,7 +79,8 @@ class Webpage:
 
     def print_basic_info(doc_info):
         """Prints url, title, description, and last updated date"""
-        print(doc_info.key, doc_info.value[:2])
+        print(doc_info.key, doc_info.values[:2])
+        # needs ''.join(doc_info.keys()) to get key isolated as string
         pass
 
     def print_full_info(doc_info):
@@ -97,8 +101,9 @@ def main():
 if __name__ == "__main__":
     main()
 
-"""
 
+
+"""
 # maybe this should be a global function? and not a class
 class link_list:
     url_list = []
