@@ -19,7 +19,6 @@ Here are the steps inline of what this script will do:
 Redesign to include classes
 #C Class that creates a webpage instance.  This class contains methods to get website info.
 
-
 example address: https://support.apple.com/en-us/HT201295
 
 """
@@ -91,11 +90,16 @@ class Webpage:
 
 def get_docs(amount_to_get):
     pass
-
+    """
+     - create a list of random numbers (amount of amount_to_get)
+     - this list needs to be checked against the csv doc so to not dublicate items
+     - use this list to create a list of items to add to the
+    """
 
 def main():
     """Checks if there is a pre-existing csv file with any apple helps docs, if so, checks docs, then gets and adds more help docs. If not, creates one and adds some apple help docs."""
-    amount_to_get = int(input("Please enter a number: "))
+    amount_to_get = int(input("Please enter a number:
+    # check for csv doc, if non-existent create one
     get_docs(amount_to_get)
 
 if __name__ == "__main__":
@@ -107,7 +111,7 @@ if __name__ == "__main__":
 # maybe this should be a global function? and not a class
 class link_list:
     url_list = []
-    
+
 soup_test = bs(html_file.html_doc, 'html.parser')
 
 for i in range(10):
