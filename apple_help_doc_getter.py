@@ -59,7 +59,10 @@ class Webpage:
 
     def create_soup(self):
         html = self.get_html()
-        soup = bs(html, features="html.parser")
+        if soup = 'Non 200 Status Code';
+            pass
+        else:
+            soup = bs(html, features="html.parser")
         return soup
 
     def get_info(self):
@@ -71,36 +74,33 @@ class Webpage:
         info_description = soup.find(attrs={"name": "description"})['content'].replace('\n','')
         info_last_modified_date = soup.find(attrs={"class": "mod-date"}).time['datetime']
 
-        doc_info = {info_url: [info_title, info_description, info_last_modified_date]}
+        doc_info = [info_url, info_title, info_description, info_last_modified_date]
 
         return doc_info
 
 
-    def print_basic_info(doc_info):
-        """Prints url, title, description, and last updated date"""
-        print(doc_info.key, doc_info.values[:2])
-        # needs ''.join(doc_info.keys()) to get key isolated as string
-        pass
-
-    def print_full_info(doc_info):
-        """Prints url, title, description, and other fun things"""
-        # TODO
-        pass
-
-
-def get_docs(amount_to_get):
+def get_docs(start, end):
     pass
     """
-     - create a list of random numbers (amount of amount_to_get)
+     - TODO create a list of random numbers (amount of amount_to_get) Maybe implement this later
      - this list needs to be checked against the csv doc so to not dublicate items
      - use this list to create a list of items to add to the
     """
+    empty_list = []
+    for count in range(start, end+1):
+        webpage = Webpage(count)
+
+        
 
 def main():
     """Checks if there is a pre-existing csv file with any apple helps docs, if so, checks docs, then gets and adds more help docs. If not, creates one and adds some apple help docs."""
-    amount_to_get = int(input("Please enter a number:
+    # amount_to_get = int(input("Please enter a number:")
+    # Input Starting num, ending num 
+    # Get List of URLS
+    # Add List to CVS File
     # check for csv doc, if non-existent create one
-    get_docs(amount_to_get)
+    # get_docs(amount_to_get)
+    pass
 
 if __name__ == "__main__":
     main()
