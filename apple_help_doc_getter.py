@@ -28,6 +28,7 @@ import html_file  # for testing
 from bs4 import BeautifulSoup as bs
 from time import sleep
 from random import randint
+from datetime import date
 
 
 class Webpage:
@@ -51,7 +52,7 @@ class Webpage:
                 r.close
                 return html
             else:
-                html = 'Non 200 Status Code'
+                html = self.url_complete
                 r.close
                 return html
         except requests.exceptions.RequestException as e:
@@ -59,8 +60,8 @@ class Webpage:
 
     def create_soup(self):
         html = self.get_html()
-        if soup = 'Non 200 Status Code';
-            pass
+        if html == self.url_complete:
+            soup = self.url_complete
         else:
             soup = bs(html, features="html.parser")
         return soup
@@ -68,29 +69,51 @@ class Webpage:
     def get_info(self):
         """Gets url, title, description, and other information"""
         soup = self.create_soup()
+        try:
+            info_url = soup.head.find(attrs={"rel": "canonical"})['href']
+            info_title = soup.title.text
+            info_description = soup.find(attrs={"name": "description"})['content'].replace('\n','')
+            info_last_modified_date = soup.find(attrs={"class": "mod-date"}).time['datetime']
 
-        info_url = soup.head.find(attrs={"rel": "canonical"})['href']
-        info_title = soup.title.text
-        info_description = soup.find(attrs={"name": "description"})['content'].replace('\n','')
-        info_last_modified_date = soup.find(attrs={"class": "mod-date"}).time['datetime']
+            doc_info = [info_url, info_title, info_description, info_last_modified_date]
 
-        doc_info = [info_url, info_title, info_description, info_last_modified_date]
+        except AttributeError as e:
+            doc_info = [soup, 'Non 200 Status Code']
 
         return doc_info
 
 
 def get_docs(start, end):
+    """
+    Takes a range of numbers and finds any support docs in given range. 
+    Input: numbers
+    Output One list of many lists
+    """
     pass
-    """
-     - TODO create a list of random numbers (amount of amount_to_get) Maybe implement this later
-     - this list needs to be checked against the csv doc so to not dublicate items
-     - use this list to create a list of items to add to the
-    """
+    
     empty_list = []
     for count in range(start, end+1):
         webpage = Webpage(count)
+        empty_list.append(webpage.get_info())
 
-        
+    full_list = empty_list
+    return full_list
+
+def export_csv(full_list):
+    """
+    Takes in a list, formats into dataframe, then exports csv file.
+    Input: list, 
+    Output: CSV file
+    """
+    year = str(date.today().year)
+    month = str(date.today().month)
+    day = str(date.today().day)
+    TODAYS_DATE = '{}{}{}'.format(year,month,day)
+
+    docs_df = pd.DataFrame(full_list)
+    docs_df.columns = ["Url","Title","Description","Last Modified"]
+    docs_df.to_csv('{}_Apple_Support_docs.csv'.format(TODAYS_DATE), index=False)
+    print("CSV File Created")
 
 def main():
     """Checks if there is a pre-existing csv file with any apple helps docs, if so, checks docs, then gets and adds more help docs. If not, creates one and adds some apple help docs."""
