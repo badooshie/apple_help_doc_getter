@@ -145,4 +145,8 @@ for i in url_list:
     print(i)
     sleep_for = randint(1,6)
     sleep(sleep_for)
+
+    asdf
+
+    
 """
